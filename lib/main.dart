@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -21,25 +22,35 @@ class MyApp extends StatelessWidget {
   }
 }
 
-Stream<String> getTime() => Stream.periodic(
-      const Duration(
-        seconds: 1,
-      ),
-      (_) => DateTime.now().toIso8601String(),
-    );
-
 class HomePage extends HookWidget {
   const HomePage({super.key});
 
-
   @override
   Widget build(BuildContext context) {
-  final dateTime = useStream(getTime());
+    final controller = useTextEditingController();
+    final text = useState('');
+    useEffect(
+      () {
+        controller.addListener(() {
+          text.value = controller.text;
+        });
+        return null;
+      },
+      [controller],
+    );
     return Scaffold(
       appBar: AppBar(
-        title: Text(dateTime.data ?? "Home Page"),
+        centerTitle: true,
+        title: const Text("Home Page"),
       ),
-      body: Container(),
+      body: Column(
+        children: [
+          TextField(
+            controller: controller,
+          ),
+          Text('You typed ${text.value}'),
+        ],
+      ),
     );
   }
 }
