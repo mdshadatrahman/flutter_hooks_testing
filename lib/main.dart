@@ -82,6 +82,7 @@ class HomePage extends HookWidget {
       initialState: const State.zero(),
       initialAction: null,
     );
+    final state = useAppLifecycleState();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -131,10 +132,13 @@ class HomePage extends HookWidget {
           ),
           const SizedBox(height: 100),
           Opacity(
-            opacity: store.state.alpha,
-            child: RotationTransition(
-              turns: AlwaysStoppedAnimation(store.state.rotationDeg / 360.0),
-              child: Image.network(url),
+            opacity: state == AppLifecycleState.resumed ? 1.0 : 0.0,
+            child: Opacity(
+              opacity: store.state.alpha,
+              child: RotationTransition(
+                turns: AlwaysStoppedAnimation(store.state.rotationDeg / 360.0),
+                child: Image.network(url),
+              ),
             ),
           ),
         ],
